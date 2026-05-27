@@ -1,12 +1,18 @@
 const express = require("express");
+const dotenv = require("dotenv");
+
+const connectDB = require("./db/db");
 
 const app = express();
 
+dotenv.config();
 
-app.get("/",(req,res)=>{
+connectDB();
+
+app.get("/", (req, res) => {
     res.send("Home page");
-})
+});
 
-app.listen(3000,()=>{
-    console.log("Srever is running on the port 3000");
-})
+app.listen(3000, () => {
+    console.log("Server is running on port 3000");
+});
