@@ -19,7 +19,7 @@ async function signup(req, res, next) {
 async function signin(req, res, next) {
     const { email, password } = req.body;
     try {
-        const validUser = await userModel.findOne({ email });
+        const validUser = await userModel.findOne({email});
         if (!validUser) {
             return next(errorHandler(404, 'User not found!'));
         }
