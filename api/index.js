@@ -1,5 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const cookieParser = require("cookie-parser");
 
 const userRoute = require("./routes/user.route");
 const authRoute = require("./routes/auth.route");
@@ -15,6 +16,7 @@ connectDB();
 
 // Middleware
 app.use(express.json());
+app.use(cookieParser());
 
 // Routes
 app.use("/api/user", userRoute);
