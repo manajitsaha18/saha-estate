@@ -1,16 +1,27 @@
 import { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
+
+import {
+  updateUserStart,
+  updateUserSuccess,
+  updateUserFailure,
+} from '../redux/user/userSlice';
 
 const Profile = () => {
   const fileRef = useRef(null);
+  const dispatch = useDispatch();
 
-  const { currentUser } = useSelector((state) => state.user);
+  const {
+    currentUser,
+    loading,
+    error,
+  } = useSelector((state) => state.user);
 
   const [file, setFile] = useState(null);
   const [formData, setFormData] = useState({});
-
   const [uploadStatus, setUploadStatus] = useState('');
+  const [updateSuccess, setUpdateSuccess] = useState(false);
 
   const handleImageUpload = async (file) => {
     try {
@@ -24,8 +35,10 @@ const Profile = () => {
         data,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type':
+              'multipart/form-data',
           },
+          withCredentials: true,
         }
       );
 
@@ -34,10 +47,16 @@ const Profile = () => {
         avatar: res.data.url,
       }));
 
-      setUploadStatus('Image uploaded successfully!');
+      setUploadStatus(
+        'Image uploaded successfully!'
+      );
+
     } catch (error) {
       console.log(error);
-      setUploadStatus('Image upload failed!');
+
+      setUploadStatus(
+        'Image upload failed!'
+      );
     }
   };
 
@@ -57,9 +76,31 @@ const Profile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(formData);
+    try {
+      dispatch(updateUserStart());
 
-    // Update User API will be added later
+      const res = await axios.put(
+        `/api/user/update/${currentUser._id}`,
+        formData,
+        {
+          withCredentials: true,
+        }
+      );
+
+      dispatch(
+        updateUserSuccess(res.data)
+      );
+
+      setUpdateSuccess(true);
+
+    } catch (error) {
+      dispatch(
+        updateUserFailure(
+          error.response?.data?.message ||
+            error.message
+        )
+      );
+    }
   };
 
   return (
@@ -83,7 +124,9 @@ const Profile = () => {
         />
 
         <img
-          onClick={() => fileRef.current.click()}
+          onClick={() =>
+            fileRef.current.click()
+          }
           src={
             formData.avatar ||
             currentUser.avatar
@@ -95,9 +138,13 @@ const Profile = () => {
         {uploadStatus && (
           <p
             className={`text-sm text-center ${
-              uploadStatus.includes('successfully')
+              uploadStatus.includes(
+                'successfully'
+              )
                 ? 'text-green-600'
-                : uploadStatus.includes('failed')
+                : uploadStatus.includes(
+                    'failed'
+                  )
                 ? 'text-red-600'
                 : 'text-slate-600'
             }`}
@@ -109,7 +156,9 @@ const Profile = () => {
         <input
           type='text'
           placeholder='Username'
-          defaultValue={currentUser.username}
+          defaultValue={
+            currentUser.username
+          }
           id='username'
           className='border p-3 rounded-lg'
           onChange={handleChange}
@@ -118,7 +167,9 @@ const Profile = () => {
         <input
           type='email'
           placeholder='Email'
-          defaultValue={currentUser.email}
+          defaultValue={
+            currentUser.email
+          }
           id='email'
           className='border p-3 rounded-lg'
           onChange={handleChange}
@@ -133,11 +184,26 @@ const Profile = () => {
         />
 
         <button
-          className='bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95'
+          disabled={loading}
+          className='bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80'
         >
-          Update
+          {loading
+            ? 'Loading...'
+            : 'Update'}
         </button>
       </form>
+
+      {error && (
+        <p className='text-red-500 mt-5'>
+          {error}
+        </p>
+      )}
+
+      {updateSuccess && (
+        <p className='text-green-500 mt-5'>
+          User updated successfully!
+        </p>
+      )}
 
       <div className='flex justify-between mt-5'>
         <span className='text-red-700 cursor-pointer'>
