@@ -1,15 +1,15 @@
-const express = require("express");
 const dotenv = require("dotenv");
+dotenv.config();
+const express = require("express");
 const cookieParser = require("cookie-parser");
 
 const userRoute = require("./routes/user.route");
 const authRoute = require("./routes/auth.route");
+const uploadRoute = require('./routes/upload.route');
 const connectDB = require("./db/db");
 
 const app = express();
 
-// Config dotenv
-dotenv.config();
 
 // Database connection
 connectDB();
@@ -21,7 +21,7 @@ app.use(cookieParser());
 // Routes
 app.use("/api/user", userRoute);
 app.use("/api/auth", authRoute);
-
+app.use("/api/upload", uploadRoute);
 // Error handling middleware
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;
