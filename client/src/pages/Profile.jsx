@@ -6,6 +6,9 @@ import {
   updateUserStart,
   updateUserSuccess,
   updateUserFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+  deleteUserFailure,
 } from '../redux/user/userSlice';
 
 const Profile = () => {
@@ -35,8 +38,7 @@ const Profile = () => {
         data,
         {
           headers: {
-            'Content-Type':
-              'multipart/form-data',
+            'Content-Type': 'multipart/form-data',
           },
           withCredentials: true,
         }
@@ -47,16 +49,10 @@ const Profile = () => {
         avatar: res.data.url,
       }));
 
-      setUploadStatus(
-        'Image uploaded successfully!'
-      );
-
+      setUploadStatus('Image uploaded successfully!');
     } catch (error) {
       console.log(error);
-
-      setUploadStatus(
-        'Image upload failed!'
-      );
+      setUploadStatus('Image upload failed!');
     }
   };
 
@@ -87,17 +83,37 @@ const Profile = () => {
         }
       );
 
-      dispatch(
-        updateUserSuccess(res.data)
-      );
-
+      dispatch(updateUserSuccess(res.data));
       setUpdateSuccess(true);
 
     } catch (error) {
       dispatch(
         updateUserFailure(
           error.response?.data?.message ||
-            error.message
+          error.message
+        )
+      );
+    }
+  };
+
+  const handleDeleteUser = async () => {
+    try {
+      dispatch(deleteUserStart());
+
+      await axios.delete(
+        `/api/user/delete/${currentUser._id}`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      dispatch(deleteUserSuccess());
+
+    } catch (error) {
+      dispatch(
+        deleteUserFailure(
+          error.response?.data?.message ||
+          error.message
         )
       );
     }
@@ -138,13 +154,9 @@ const Profile = () => {
         {uploadStatus && (
           <p
             className={`text-sm text-center ${
-              uploadStatus.includes(
-                'successfully'
-              )
+              uploadStatus.includes('successfully')
                 ? 'text-green-600'
-                : uploadStatus.includes(
-                    'failed'
-                  )
+                : uploadStatus.includes('failed')
                 ? 'text-red-600'
                 : 'text-slate-600'
             }`}
@@ -156,9 +168,7 @@ const Profile = () => {
         <input
           type='text'
           placeholder='Username'
-          defaultValue={
-            currentUser.username
-          }
+          defaultValue={currentUser.username}
           id='username'
           className='border p-3 rounded-lg'
           onChange={handleChange}
@@ -167,9 +177,7 @@ const Profile = () => {
         <input
           type='email'
           placeholder='Email'
-          defaultValue={
-            currentUser.email
-          }
+          defaultValue={currentUser.email}
           id='email'
           className='border p-3 rounded-lg'
           onChange={handleChange}
@@ -187,9 +195,7 @@ const Profile = () => {
           disabled={loading}
           className='bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80'
         >
-          {loading
-            ? 'Loading...'
-            : 'Update'}
+          {loading ? 'Loading...' : 'Update'}
         </button>
       </form>
 
@@ -206,7 +212,10 @@ const Profile = () => {
       )}
 
       <div className='flex justify-between mt-5'>
-        <span className='text-red-700 cursor-pointer'>
+        <span
+          onClick={handleDeleteUser}
+          className='text-red-700 cursor-pointer'
+        >
           Delete Account
         </span>
 

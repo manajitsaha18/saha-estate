@@ -50,6 +50,43 @@ async function updateUser(req, res, next) {
   }
 }
 
-module.exports = {
-  updateUser,
-};
+async function deleteUser(req, res, next) {
+  if (req.user.id !== req.params.id) {
+    return next(
+      errorHandler(
+        401,
+        'You can delete only your own account!'
+      )
+    );
+  }
+
+  try {
+    const deletedUser =
+      await userModel.findByIdAndDelete(
+        req.params.id
+      );
+
+    if (!deletedUser) {
+      return next(
+        errorHandler(
+          404,
+          'User not found!'
+        )
+      );
+    }
+
+    res
+      .clearCookie('access_token')
+      .status(200)
+      .json({
+        message:
+          'User deleted successfully!',
+      });
+
+  } catch (error) {
+    next(error);
+  }
+}
+
+
+module.exports = { updateUser, deleteUser };
