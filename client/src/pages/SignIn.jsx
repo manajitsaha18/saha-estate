@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
+import OAuth from '../components/OAuth';
 import {
   signInStart,
   signInSuccess,
@@ -16,7 +17,7 @@ const SignIn = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  
+
   // Handle Input Change
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -84,6 +85,7 @@ const SignIn = () => {
         >
           {loading ? 'Loading...' : 'Sign In'}
         </button>
+        <OAuth />
 
       </form>
 
