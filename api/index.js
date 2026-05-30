@@ -8,6 +8,7 @@ const cors = require('cors');
 const userRoute = require('./routes/user.route');
 const authRoute = require('./routes/auth.route');
 const uploadRoute = require('./routes/upload.route');
+const listingRoute = require('./routes/listing.route');
 
 const connectDB = require('./db/db');
 
@@ -31,6 +32,8 @@ app.use(cookieParser());
 app.use('/api/user', userRoute);
 app.use('/api/auth', authRoute);
 app.use('/api/upload', uploadRoute);
+app.use('/api/listing', listingRoute);
+
 
 // Error Handler
 app.use((err, req, res, next) => {
@@ -42,6 +45,11 @@ app.use((err, req, res, next) => {
     statusCode,
     message,
   });
+});
+
+
+app.get('/', (req, res) => {
+  res.send('Welcome to the API');
 });
 
 app.listen(3000, () => {
