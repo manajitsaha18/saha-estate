@@ -29,6 +29,9 @@ const Profile = () => {
   const [formData, setFormData] = useState({});
   const [uploadStatus, setUploadStatus] = useState('');
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [userListings, setUserListings] = useState([]);
+  const [showListingsError, setShowListingsError] =
+    useState(false);
 
   const handleImageUpload = async (file) => {
     try {
@@ -149,6 +152,24 @@ const Profile = () => {
     }
   };
 
+  const handleShowListings = async () => {
+    try {
+      setShowListingsError(false);
+
+      const res = await axios.get(
+        `/api/user/listings/${currentUser._id}`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      setUserListings(res.data);
+
+    } catch (error) {
+      setShowListingsError(true);
+      console.log(error);
+    }
+  };
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='text-3xl font-semibold text-center my-7'>
@@ -183,13 +204,12 @@ const Profile = () => {
 
         {uploadStatus && (
           <p
-            className={`text-sm text-center ${
-              uploadStatus.includes('successfully')
-                ? 'text-green-600'
-                : uploadStatus.includes('failed')
+            className={`text-sm text-center ${uploadStatus.includes('successfully')
+              ? 'text-green-600'
+              : uploadStatus.includes('failed')
                 ? 'text-red-600'
                 : 'text-slate-600'
-            }`}
+              }`}
           >
             {uploadStatus}
           </p>
@@ -259,6 +279,57 @@ const Profile = () => {
           Sign Out
         </span>
       </div>
+      <button
+        onClick={handleShowListings}
+        className='text-green-700 w-full text-center'
+      >
+        Show Listings
+      </button>
+      {showListingsError && (
+        <p className='text-red-700 mt-5'>
+          Error showing listings
+        </p>
+      )}
+
+      {userListings &&
+        userListings.length > 0 && (
+          <div className='flex flex-col gap-4 mt-5'>
+            <h1 className='text-center text-2xl font-semibold'>
+              Your Listings
+            </h1>
+
+            {userListings.map((listing) => (
+              <div
+                key={listing._id}
+                className='border rounded-lg p-3 flex justify-between items-center gap-4'
+              >
+                <img
+                  src={listing.imageUrls[0]}
+                  alt='listing'
+                  className='h-16 w-16 object-cover rounded'
+                />
+
+                <p className='font-semibold flex-1 truncate'>
+                  {listing.name}
+                </p>
+
+                <div className='flex gap-3'>
+                  <button
+                    className='text-red-700 uppercase'
+                  >
+                    Delete
+                  </button>
+
+                  <button
+                    className='text-green-700 uppercase'
+                  >
+                    Edit
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
     </div>
   );
 };
