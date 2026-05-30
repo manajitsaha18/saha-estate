@@ -170,6 +170,40 @@ const Profile = () => {
       console.log(error);
     }
   };
+
+
+
+
+  const handleListingDelete = async (
+    listingId
+  ) => {
+
+    const confirmDelete = window.confirm(
+      'Are you sure you want to delete this listing?'
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(
+        `/api/listing/delete/${listingId}`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      setUserListings((prev) =>
+        prev.filter(
+          (listing) =>
+            listing._id !== listingId
+        )
+      );
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='text-3xl font-semibold text-center my-7'>
@@ -315,6 +349,10 @@ const Profile = () => {
 
                 <div className='flex gap-3'>
                   <button
+                    type='button'
+                    onClick={() =>
+                      handleListingDelete(listing._id)
+                    }
                     className='text-red-700 uppercase'
                   >
                     Delete
