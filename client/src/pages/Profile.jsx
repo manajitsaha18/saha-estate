@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 import {
   updateUserStart,
@@ -226,6 +227,9 @@ const Profile = () => {
         >
           {loading ? 'Loading...' : 'Update'}
         </button>
+        <Link to={"/createlisting"} className='text-center bg-green-700 text-white rounded-lg uppercase hover:opacity-95 p-3'>
+          Create Listing
+        </Link>
       </form>
 
       {error && (
