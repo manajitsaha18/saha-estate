@@ -111,5 +111,26 @@ async function getUserListings(req, res, next) {
   }
 }
 
+async function getUser(req, res, next) {
+  try {
+    const user = await userModel.findById(
+      req.params.id
+    );
 
-module.exports = { updateUser, deleteUser, getUserListings };
+    if (!user) {
+      return next(
+        errorHandler(404, 'User not found!')
+      );
+    }
+
+    const { password, ...rest } = user._doc;
+
+    res.status(200).json(rest);
+
+  } catch (error) {
+    next(error);
+  }
+}
+
+
+module.exports = { updateUser, deleteUser, getUserListings, getUser };
