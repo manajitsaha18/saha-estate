@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import ListingItem from '../components/ListingItem';
 import axios from 'axios';
 
-function Search() {
+const Search = () => {
     const location = useLocation();
 
     const navigate = useNavigate();

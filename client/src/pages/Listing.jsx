@@ -91,17 +91,18 @@ const Listing = () => {
 
     return (
         <main>
-            
+
             <Swiper
                 navigation
                 modules={[Navigation]}
+                className='w-full shadow-lg'
             >
                 {listing.imageUrls.map((url) => (
                     <SwiperSlide key={url}>
                         <img
                             src={url}
                             alt='listing'
-                            className='w-full h-[550px] object-cover'
+                            className='w-full h-[375px] md:h-[430px] object-cover'
                         />
                     </SwiperSlide>
                 ))}
