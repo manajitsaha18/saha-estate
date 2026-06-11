@@ -114,14 +114,14 @@ const Listing = () => {
                 </h1>
 
                 <div className='flex flex-wrap gap-3'>
-                    <span className='bg-red-600 text-white px-4 py-1 rounded-full text-sm'>
+                    <span className='bg-red-700 text-white px-4 py-1 rounded-full text-sm'>
                         {listing.type === 'rent'
                             ? 'For Rent'
                             : 'For Sale'}
                     </span>
 
                     {listing.offer && (
-                        <span className='bg-green-600 text-white px-4 py-1 rounded-full text-sm'>
+                        <span className='bg-green-700 text-white px-4 py-1 rounded-full text-sm'>
                             $
                             {listing.regularPrice -
                                 listing.discountPrice}{' '}

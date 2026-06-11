@@ -108,4 +108,58 @@ async function getListing(req, res, next) {
 }
 
 
-module.exports = { createListing, deleteListing, updateListing, getListing };
+async function getListings(req,res,next) {
+  try {
+    const limit = parseInt(req.query.limit) || 9;
+
+    const startIndex = parseInt(req.query.startIndex) || 0;
+
+    const offer = req.query.offer === 'true'
+        ? true
+        : req.query.offer === 'false'
+        ? false
+        : { $in: [true, false] };
+
+    const furnished = req.query.furnished === 'true'
+        ? true
+        : req.query.furnished === 'false'
+        ? false
+        : { $in: [true, false] };
+
+    const parking = req.query.parking === 'true'
+        ? true
+        : req.query.parking === 'false'
+        ? false
+        : { $in: [true, false] };
+
+    const type = req.query.type === 'all' || !req.query.type
+        ? { $in: ['sale', 'rent'] }
+        : req.query.type;
+
+    const searchTerm = req.query.searchTerm || '';
+
+    const sort = req.query.sort || 'createdAt';
+
+    const order = req.query.order || 'desc';
+
+    const listings = await listingModel.find({
+        name: {
+          $regex: searchTerm,
+          $options: 'i',
+        },
+        offer,
+        furnished,
+        parking,
+        type,
+      })
+      .limit(limit).skip(startIndex)
+      .sort({ [sort]: order});
+
+    res.status(200).json(listings);
+
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = { createListing, deleteListing, updateListing, getListing, getListings };
