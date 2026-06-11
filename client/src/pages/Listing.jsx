@@ -91,7 +91,7 @@ const Listing = () => {
 
     return (
         <main>
-            {/* Image Slider */}
+            
             <Swiper
                 navigation
                 modules={[Navigation]}
@@ -107,7 +107,6 @@ const Listing = () => {
                 ))}
             </Swiper>
 
-            {/* Listing Details */}
             <div className='max-w-6xl mx-auto p-4 flex flex-col gap-5 my-7'>
                 <h1 className='text-4xl font-bold text-slate-800'>
                     {listing.name}

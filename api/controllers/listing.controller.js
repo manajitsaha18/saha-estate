@@ -116,20 +116,15 @@ async function getListings(req,res,next) {
 
     const offer = req.query.offer === 'true'
         ? true
-        : req.query.offer === 'false'
-        ? false
         : { $in: [true, false] };
 
-    const furnished = req.query.furnished === 'true'
-        ? true
-        : req.query.furnished === 'false'
-        ? false
-        : { $in: [true, false] };
+    const furnished =
+  req.query.furnished === 'true'
+    ? true
+    : { $in: [true, false] };
 
     const parking = req.query.parking === 'true'
         ? true
-        : req.query.parking === 'false'
-        ? false
         : { $in: [true, false] };
 
     const type = req.query.type === 'all' || !req.query.type
