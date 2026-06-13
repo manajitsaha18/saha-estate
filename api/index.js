@@ -4,6 +4,7 @@ dotenv.config();
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const path = require('path');
 
 const userRoute = require('./routes/user.route');
 const authRoute = require('./routes/auth.route');
@@ -28,12 +29,20 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-// Routes
+// API Routes
 app.use('/api/user', userRoute);
 app.use('/api/auth', authRoute);
 app.use('/api/upload', uploadRoute);
 app.use('/api/listing', listingRoute);
 
+// Serve React App (Production)
+app.use(express.static(path.join(__dirname, '../client/dist')));
+
+app.get('*', (req, res) => {
+  res.sendFile(
+    path.join(__dirname, '../client/dist/index.html')
+  );
+});
 
 // Error Handler
 app.use((err, req, res, next) => {
@@ -47,11 +56,9 @@ app.use((err, req, res, next) => {
   });
 });
 
+// Server
+const PORT = 3000;
 
-app.get('/', (req, res) => {
-  res.send('Welcome to the API');
-});
-
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
